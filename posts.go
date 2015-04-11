@@ -14,7 +14,7 @@ type SiteRec struct {
 }
 
 type PostEntry struct {
-	Site     SiteRec   // The "pointer" to the SiteRec
+	//Site     SiteRec   // The "pointer" to the SiteRec
 	Title    string    // The post title
 	Body     string    // The post body
 	Author   string    // The post Author
@@ -24,20 +24,26 @@ type PostEntry struct {
 	Modified time.Time // The date and time of the Post
 }
 
+func (SiteRec) SetSite(Title, Description, Address, Feed, Author, Rtl) SiteRec {
+	return SiteRec{
+		Title,
+		Description,
+		Address,
+		Feed,
+		Author,
+		Rtl,
+	}
+}
+
 func ParseSite(address string, sites *[]SiteRec, posts *[]PostEntry) error {
 	feed, err := rss.Fetch(address)
 	if err != nil {
 		return err
 	}
 
-	site := SiteRec{
-		feed.Title,
-		feed.Description,
-		feed.Link,
-		feed.UpdateURL,
-		feed.Author,
-		false,
-	}
+	site := SiteRec.SetSite(
+		feed.Title, feed.Description, feed.Link, feed.UpdateURL, feed.Author, false,
+	)
 
 	return nil
 }
