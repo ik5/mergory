@@ -24,8 +24,11 @@ type Settings struct {
 					   4. opml
 		*/
 	}
+
+	Sites []SiteRec
 }
 
 func (Settings) LoadConf(filename string) (Settings, error) {
+	//site := AddSite(feed.Title, feed.Description, feed.Link, feed.UpdateURL, feed.Nickname, false)
 	return Settings{}, nil
 }
