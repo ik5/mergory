@@ -5,11 +5,12 @@ import (
 )
 
 type SiteRec struct {
-	Title  string // Blog title
-	Site   string // Main site address e.g. http://blog.example.com/
-	Feed   string // The feed address e.g. http://blog.example.com/computers/feed/
-	Author string // The name of the author for the site
-	Rtl    string // The main direction of the blog (Left to Right or Right to Left)
+	Title       string // Blog title
+	Description string // Site Description
+	Site        string // Main site address e.g. http://blog.example.com/
+	Feed        string // The feed address e.g. http://blog.example.com/computers/feed/
+	Author      string // The name of the author for the site
+	Rtl         string // The main direction of the blog (Left to Right or Right to Left)
 }
 
 type PostEntry struct {
@@ -23,13 +24,20 @@ type PostEntry struct {
 	Modified time.Time // The date and time of the Post
 }
 
-func ParseSite(address string) error {
-	_, err := rss.Fetch(address)
+func ParseSite(address string, sites *[]SiteRec, posts *[]PostEntry) error {
+	feed, err := rss.Fetch(address)
 	if err != nil {
 		return err
 	}
 
-	//feed.Title
+	site := SiteRec{
+		feed.Title,
+		feed.Description,
+		feed.Link,
+		feed.UpdateURL,
+		feed.Author,
+		false,
+	}
 
 	return nil
 }
