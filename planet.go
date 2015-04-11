@@ -28,7 +28,7 @@ type PostEntry struct {
 }
 
 var sites = []SiteRec{}
-var entries = []map[time.Time][]PostEntry{}
+var entries = map[time.Time][]PostEntry{}
 
 func LoadConf(filename string) {
 
