@@ -35,7 +35,19 @@ func (SiteRec) SetSite(Title, Description, Address, Feed, Author, Rtl) SiteRec {
 	}
 }
 
-func ParseSite(address string, sites *[]SiteRec, posts *[]PostEntry) error {
+func (PostEntry) AddPost(Title, Body, Author, Url, ID, Rtl, Modified) PostEntry {
+	return PostEntry{
+		Title,
+		Body,
+		Author,
+		Url,
+		ID,
+		Rtl,
+		Modified,
+	}
+}
+
+func ParseSite(address string, sites *[]SiteRec, posts *map[time.Time][]PostEntry) error {
 	feed, err := rss.Fetch(address)
 	if err != nil {
 		return err
