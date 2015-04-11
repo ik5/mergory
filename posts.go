@@ -18,6 +18,18 @@ type PostEntry struct {
 	Body     string    // The post body
 	Author   string    // The post Author
 	Url      string    // The direct post Url
+	ID       string    // The actual post id url
 	Rtl      bool      // The direction of the post (Left to Right or Right to Left)
 	Modified time.Time // The date and time of the Post
+}
+
+func ParseSite(address string) error {
+	_, err := rss.Fetch(address)
+	if err != nil {
+		return err
+	}
+
+	//feed.Title
+
+	return nil
 }
