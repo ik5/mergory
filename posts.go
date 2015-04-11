@@ -47,15 +47,31 @@ func (PostEntry) AddPost(Title, Body, Author, Url, ID, Rtl, Modified) PostEntry 
 	}
 }
 
-func ParseSite(address string, sites *[]SiteRec, posts *map[time.Time][]PostEntry) error {
+func ParseSite(address string, sites *[]SiteRec) (map[time.Time][]PostEntry, error) {
 	feed, err := rss.Fetch(address)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	site := SiteRec.SetSite(
 		feed.Title, feed.Description, feed.Link, feed.UpdateURL, feed.Author, false,
 	)
+
+	*sites = append(*sites, site)
+	entries := map[time.Time][]PostEntry{}
+	for _, v := range feed.Item {
+		entry := AddPost(
+			v.Title,
+			v.Content,
+			v.Nickname,
+			v.Link,
+			v.ID,
+			false,
+			v.Date,
+		)
+
+		entries[v.Date] = append(entries[v.date], entry)
+	}
 
 	return nil
 }
