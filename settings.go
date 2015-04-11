@@ -6,6 +6,7 @@ import (
 
 type Settings struct {
 	SiteName     string    // The ttle of the site
+	Description  string    // The site description
 	DisplayURL   string    // The url to be displayd
 	OwnerName    string    // The owner of the site
 	OwnerEmail   string    // The owner email
@@ -39,6 +40,8 @@ func (Settings) LoadConf(filename string) (Settings, error) {
 				switch key {
 				case "site_name":
 					settings.SiteName = value
+				case "description":
+					settings.Description = value
 				case "display_url":
 					settings.DisplayURL = value
 				case "owner_name":
