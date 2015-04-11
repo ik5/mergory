@@ -26,6 +26,6 @@ type Settings struct {
 	}
 }
 
-func LoadConf(filename string) {
-
+func (Settings) LoadConf(filename string) (Settings, error) {
+	return Settings{}, nil
 }
