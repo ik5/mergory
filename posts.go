@@ -73,5 +73,5 @@ func ParseSite(address string, sites *[]SiteRec) (map[time.Time][]PostEntry, err
 		entries[v.Date] = append(entries[v.date], entry)
 	}
 
-	return nil
+	return entries, nil
 }
