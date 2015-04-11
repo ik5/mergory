@@ -24,7 +24,7 @@ type PostEntry struct {
 	Modified time.Time // The date and time of the Post
 }
 
-func (SiteRec) SetSite(Title, Description, Address, Feed, Author, Rtl) SiteRec {
+func (SiteRec) AddSite(Title, Description, Address, Feed, Author, Rtl) SiteRec {
 	return SiteRec{
 		Title,
 		Description,
@@ -53,7 +53,7 @@ func ParseSite(address string, sites *[]SiteRec) (map[time.Time][]PostEntry, err
 		return nil, err
 	}
 
-	site := SiteRec.SetSite(
+	site := SiteRec.AddSite(
 		feed.Title, feed.Description, feed.Link, feed.UpdateURL, feed.Author, false,
 	)
 
