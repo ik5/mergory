@@ -2,6 +2,8 @@ package main
 
 import (
 	ini "github.com/vaughan0/go-ini"
+	"reflect"
+	"strings"
 )
 
 type Settings struct {
@@ -25,6 +27,34 @@ type Settings struct {
 	Sites []SiteRec
 }
 
+func set_settings(key string, value interface{}, settings *Settings) {
+	switch key {
+	case "site_name":
+		settings.SiteName = ToStr(reflect.ValueOf(value))
+	case "description":
+		settings.Description = ToStr(reflect.ValueOf(value))
+	case "display_url":
+		settings.DisplayURL = ToStr(reflect.ValueOf(value))
+	case "owner_name":
+		settings.OwnerName = ToStr(reflect.ValueOf(value))
+	case "owner_email":
+		settings.OwnerEmail = ToStr(reflect.ValueOf(value))
+	case "items_per_page":
+		settings.ItemsPerPage = ToInt(reflect.ValueOf(value))
+	case "public_dir":
+		settings.PublicDir = ToStr(reflect.ValueOf(value))
+	case "template_dir":
+		settings.TemplateDir = ToStr(reflect.ValueOf(value))
+	case "template_name":
+		copy(settings.TemplateName[:], strings.Split("|", ToStr(reflect.ValueOf(value))))
+	}
+
+}
+
+func set_sites(key, value string, settings *Settings) {
+
+}
+
 func (Settings) LoadConf(filename string) (Settings, error) {
 	file, err := ini.LoadFile(filename)
 	if err != nil {
@@ -37,21 +67,11 @@ func (Settings) LoadConf(filename string) (Settings, error) {
 		for key, value := range file[name] {
 			switch name {
 			case "settings":
-				switch key {
-				case "site_name":
-					settings.SiteName = value
-				case "description":
-					settings.Description = value
-				case "display_url":
-					settings.DisplayURL = value
-				case "owner_name":
-					settings.OwnerName = value
-				case "owner_email":
-					settings.OwnerEmail = value
-				}
-			//case "default":
+				set_settings(key, value, &settings)
 
-			default:
+			case "default":
+				set_settings(key, value, &settings)
+
 			}
 		}
 	}
