@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	valid "github.com/asaskevich/govalidator"
 	ini "github.com/vaughan0/go-ini"
 	"reflect"
@@ -115,13 +116,26 @@ func (Settings) LoadConf(filename string) (Settings, error) {
 				case "description":
 					site.Description = value
 				case "site":
-					site.Site = value // override section name that is a site
+					if valid.IsURL(value) {
+						site.Site = value // override section name that is a site
+					} else {
+						return Settings{}, errors.New("Invalid site url")
+					}
 				case "feed":
-					site.Feed = value
+					if valid.IsURL(value) {
+						site.Feed = value
+					} else {
+						return Settings{}, errors.New("Invalid feed url")
+					}
 				case "author":
 					site.Author = value
 				case "Rtl":
-					site.Rtl, _ = valid.ToBoolean(value)
+					content := strings.ToLower(value)
+					if content == "true" || content == "false" {
+						site.Rtl, _ = valid.ToBoolean(content)
+					} else {
+						site.Rtl = false
+					}
 				}
 
 			}
