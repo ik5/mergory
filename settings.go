@@ -8,27 +8,6 @@ import (
 	"strings"
 )
 
-type Settings struct {
-	SiteName     string    // The ttle of the site
-	Description  string    // The site description
-	DisplayURL   string    `valid:"url"` // The url to be displayd
-	OwnerName    string    // The owner of the site
-	OwnerEmail   string    `valid:email` // The owner email
-	ItemsPerPage int       // The number of items at a page
-	PublicDir    string    // The path to generate the content into
-	TemplateDir  string    // The path of the templates
-	TemplateName [5]string /*
-		The name of the templates to use:
-		0. index
-		1. atom
-		2. rss20
-		3. rss10
-		4. opml
-	*/
-
-	Sites []SiteRec
-}
-
 func set_settings(key string, value interface{}, settings *Settings) {
 	switch key {
 	case "site_name":
