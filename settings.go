@@ -51,10 +51,6 @@ func set_settings(key string, value interface{}, settings *Settings) {
 
 }
 
-func set_sites(key, value string, settings *Settings) {
-
-}
-
 func (Settings) LoadConf(filename string) (Settings, error) {
 	file, err := ini.LoadFile(filename)
 	if err != nil {
@@ -62,8 +58,11 @@ func (Settings) LoadConf(filename string) (Settings, error) {
 	}
 
 	var settings Settings
+	var site_section bool
 
 	for name, _ := range file {
+		var site SiteRec
+		site_section = false
 		for key, value := range file[name] {
 			switch name {
 			case "settings":
@@ -72,10 +71,33 @@ func (Settings) LoadConf(filename string) (Settings, error) {
 			case "default":
 				set_settings(key, value, &settings)
 
+			default:
+				site_section = true
+				site.Site = name
+				switch key {
+				case "title":
+					site.Title = value
+				case "description":
+					site.Description = value
+				case "site":
+					site.Site = value // override section name that is a site
+				case "feed":
+					site.Feed = value
+				case "author":
+					site.Author = value
+				case "Rtl":
+					site.Rtl = value == "true"
+				}
+
 			}
 		}
+
+		if site_section {
+			settings.Sites = append(settings.Sites, site)
+			site_section = false
+		}
+
 	}
 
-	//site := AddSite(feed.Title, feed.Description, feed.Link, feed.UpdateURL, feed.Nickname, false)
 	return Settings{}, nil
 }
