@@ -1,6 +1,7 @@
 package main
 
 import (
+	valid "github.com/asaskevich/govalidator"
 	ini "github.com/vaughan0/go-ini"
 	"reflect"
 	"strings"
@@ -9,9 +10,9 @@ import (
 type Settings struct {
 	SiteName     string    // The ttle of the site
 	Description  string    // The site description
-	DisplayURL   string    // The url to be displayd
+	DisplayURL   string    `valid:"url"` // The url to be displayd
 	OwnerName    string    // The owner of the site
-	OwnerEmail   string    // The owner email
+	OwnerEmail   string    `valid:email` // The owner email
 	ItemsPerPage int       // The number of items at a page
 	PublicDir    string    // The path to generate the content into
 	TemplateDir  string    // The path of the templates
@@ -34,17 +35,40 @@ func set_settings(key string, value interface{}, settings *Settings) {
 	case "description":
 		settings.Description = ToStr(reflect.ValueOf(value))
 	case "display_url":
-		settings.DisplayURL = ToStr(reflect.ValueOf(value))
+		site := ToStr(reflect.ValueOf(value))
+		if valid.IsURL(site) {
+			settings.DisplayURL = site
+		}
 	case "owner_name":
 		settings.OwnerName = ToStr(reflect.ValueOf(value))
 	case "owner_email":
-		settings.OwnerEmail = ToStr(reflect.ValueOf(value))
+		email := ToStr(reflect.ValueOf(value))
+		if valid.IsEmail(email) {
+			settings.OwnerEmail = email
+		}
 	case "items_per_page":
-		settings.ItemsPerPage = ToInt(reflect.ValueOf(value))
+		if valid.IsInt(ToStr(reflect.ValueOf(value))) {
+			settings.ItemsPerPage = ToInt(reflect.ValueOf(value))
+		} else {
+			settings.ItemsPerPage = -1
+		}
 	case "public_dir":
-		settings.PublicDir = ToStr(reflect.ValueOf(value))
+		path := ToStr(reflect.ValueOf(value))
+		var is_path, _ = valid.IsFilePath(path)
+		if is_path && ValidDir(path) {
+			settings.PublicDir = path
+		} else {
+			settings.PublicDir = ""
+		}
 	case "template_dir":
-		settings.TemplateDir = ToStr(reflect.ValueOf(value))
+		path := ToStr(reflect.ValueOf(value))
+		var is_path, _ = valid.IsFilePath(path)
+		if is_path && ValidDir(path) {
+			settings.TemplateDir = path
+		} else {
+			settings.TemplateDir = ""
+		}
+
 	case "template_name":
 		copy(settings.TemplateName[:], strings.Split("|", ToStr(reflect.ValueOf(value))))
 	}
@@ -86,7 +110,7 @@ func (Settings) LoadConf(filename string) (Settings, error) {
 				case "author":
 					site.Author = value
 				case "Rtl":
-					site.Rtl = value == "true"
+					site.Rtl, _ = valid.ToBoolean(value)
 				}
 
 			}
