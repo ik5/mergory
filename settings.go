@@ -70,7 +70,18 @@ func set_settings(key string, value interface{}, settings *Settings) {
 		}
 
 	case "template_name":
-		copy(settings.TemplateName[:], strings.Split("|", ToStr(reflect.ValueOf(value))))
+		var templates []string
+		arr := len(settings.TemplateName)
+		copy(templates, strings.Split("|", ToStr(reflect.ValueOf(value))))
+		//copy(settings.TemplateName[:], templates)
+		for i, v := range templates {
+			if i > arr { // we can have only 5 items (or less)
+				break
+			}
+
+			settings.TemplateName[i] = v
+		}
+
 	}
 
 }
