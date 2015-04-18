@@ -48,10 +48,12 @@ func set_settings(key string, value interface{}, settings *Settings) {
 			settings.OwnerEmail = email
 		}
 	case "items_per_page":
-		if valid.IsInt(ToStr(reflect.ValueOf(value))) {
-			settings.ItemsPerPage = ToInt(reflect.ValueOf(value))
+		item := ToStr(reflect.ValueOf(value))
+		if valid.IsInt(item) {
+			i, _ := valid.ToInt(item)
+			settings.ItemsPerPage = int(i)
 		} else {
-			settings.ItemsPerPage = -1
+			settings.ItemsPerPage = 25
 		}
 	case "public_dir":
 		path := ToStr(reflect.ValueOf(value))
@@ -87,7 +89,7 @@ func set_settings(key string, value interface{}, settings *Settings) {
 
 }
 
-func (Settings) LoadConf(filename string) (Settings, error) {
+func LoadConf(filename string) (Settings, error) {
 	file, err := ini.LoadFile(filename)
 	if err != nil {
 		return Settings{}, err
@@ -122,14 +124,14 @@ func (Settings) LoadConf(filename string) (Settings, error) {
 						return Settings{}, errors.New("Invalid site url")
 					}
 				case "feed":
-					if valid.IsURL(value) {
+					if valid.IsRequestURL(value) {
 						site.Feed = value
 					} else {
 						return Settings{}, errors.New("Invalid feed url")
 					}
 				case "author":
 					site.Author = value
-				case "Rtl":
+				case "rtl":
 					content := strings.ToLower(value)
 					if content == "true" || content == "false" {
 						site.Rtl, _ = valid.ToBoolean(content)
