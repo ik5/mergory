@@ -148,5 +148,5 @@ func (Settings) LoadConf(filename string) (Settings, error) {
 
 	}
 
-	return Settings{}, nil
+	return settings, nil
 }
