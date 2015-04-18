@@ -16,3 +16,8 @@ func ValidDir(path string) bool {
 
 	return err == nil && info.IsDir()
 }
+
+func PathExists(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
+}
